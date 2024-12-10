@@ -7,7 +7,7 @@
 #include "mmu.h"
 #include "proc.h"
 
-//this is claude
+//this is change
 int
 sys_set_limit(void)
 {
@@ -28,17 +28,6 @@ sys_set_limit(void)
   
   return 0;
 }
-
-//this is chat gpt
-
-// int
-// set_limit(int limit) {
-//     if (limit < 0 || limit > 100)
-//         return -1; // Invalid input
-//     struct proc *curproc = myproc();
-//     curproc->cpu_quota = limit; // Set the CPU usage limit
-//     return 0; // Success
-// }
 
 int
 sys_fork(void)

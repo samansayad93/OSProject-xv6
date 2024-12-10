@@ -190,6 +190,5 @@ void            clearpteu(pde_t *pgdir, char *uva);
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
 
 //this is change 
-// In defs.h
 int sys_set_limit(void);
 int set_limit(int limit);

@@ -103,8 +103,7 @@ extern int sys_unlink(void);
 extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
-//this is change it
-// In syscall.c
+//this is change
 extern int sys_set_limit(void);
 
 static int (*syscalls[])(void) = {
@@ -129,7 +128,7 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
-//this is change it
+//this is change
 [SYS_set_limit] sys_set_limit,
 };
 

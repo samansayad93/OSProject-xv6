@@ -323,96 +323,55 @@ wait(void)
 void
 scheduler(void)
 {
-    struct proc *p;
-    struct cpu *c = mycpu();
-    c->proc = 0;
-    
-    for(;;){
-        sti();
-        acquire(&ptable.lock);
-        
-        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-            if(p->state != RUNNABLE)
-                continue;
-            
-            // CPU limit tracking
-            uint current_tick = ticks;
-            uint elapsed_ticks = current_tick - p->last_check_tick;
-            
-            // Reset tracking every second
-            if(elapsed_ticks >= 100){  // assuming 100 ticks = 1 second
-                p->cpu_usage_ms = 0;
-                p->last_check_tick = current_tick;
-            }
-            
-            // Calculate allowed CPU time
-            int max_allowed_ms = elapsed_ticks * (p->cpu_limit / 100.0);
-            
-            // Skip process if it exceeded limit
-            if(p->cpu_limit > 0 && p->cpu_usage_ms >= max_allowed_ms){
-                continue;
-            }
-            
-            // Normal scheduling
-            c->proc = p;
-            switchuvm(p);
-            p->state = RUNNING;
-            
-            // Track CPU usage
-            uint start_tick = ticks;
-            swtch(&(c->scheduler), p->context);
-            uint end_tick = ticks;
-            
-            // Update CPU usage
-            p->cpu_usage_ms += (end_tick - start_tick);
-            
-            switchkvm();
-            c->proc = 0;
-        }
-        release(&ptable.lock);
-    }
-}
-// void
-// scheduler(void)
-// {
-//   struct proc *p;
-//   struct cpu *c = mycpu();
-//   c->proc = 0;
+  struct proc *p;
+  struct cpu *c = mycpu();
+  c->proc = 0;
   
-//   for(;;){
-//     // Enable interrupts on this processor.
-//     sti();
-
-//     // Loop over process table looking for process to run.
-//     acquire(&ptable.lock);
-//     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-//       if(p->state != RUNNABLE)
-//         continue;
-
-//       // Enforce CPU quota
-//       if (p->cpu_quota > 0 && p->cpu_time >= p->cpu_quota * 10) {
-//         continue; // Skip this process if it exceeds quota
-//       }
-
-//       // Switch to chosen process.  It is the process's job
-//       // to release ptable.lock and then reacquire it
-//       // before jumping back to us.
-//       p->cpu_time++;
-//       c->proc = p;
-//       switchuvm(p);
-//       p->state = RUNNING;
-
-//       swtch(&(c->scheduler), p->context);
-//       switchkvm();
-
-//       // Process is done running for now.
-//       // It should have changed its p->state before coming back.
-//       c->proc = 0;
-//     }
-//     release(&ptable.lock);
-
-//   }
-// }
+  for(;;){
+    sti();
+    acquire(&ptable.lock);
+    
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+      
+      // CPU limit tracking
+      uint current_tick = ticks;
+      uint elapsed_ticks = current_tick - p->last_check_tick;
+      
+      // Reset tracking every second
+      if(elapsed_ticks >= 100){  // assuming 100 ticks = 1 second
+        p->cpu_usage_ms = 0;
+        p->last_check_tick = current_tick;
+      }
+      
+      // Calculate allowed CPU time
+      int max_allowed_ms = elapsed_ticks * (p->cpu_limit / 100.0);
+      
+      // Skip process if it exceeded limit
+      if(p->cpu_limit > 0 && p->cpu_usage_ms >= max_allowed_ms){
+        continue;
+      }
+      
+      // Normal scheduling
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+      
+      // Track CPU usage
+      uint start_tick = ticks;
+      swtch(&(c->scheduler), p->context);
+      uint end_tick = ticks;
+      
+      // Update CPU usage
+      p->cpu_usage_ms += (end_tick - start_tick);
+      
+      switchkvm();
+      c->proc = 0;
+    }
+    release(&ptable.lock);
+  }
+}
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores
