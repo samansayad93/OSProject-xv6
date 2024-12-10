@@ -49,6 +49,10 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  //this is change 
+  int cpu_limit;       // CPU usage limit percentage
+  int cpu_usage_ms;    // Cumulative CPU usage in milliseconds
+  uint last_check_tick;// Last tick when CPU usage was checked
 };
 
 // Process memory is laid out contiguously, low addresses first:

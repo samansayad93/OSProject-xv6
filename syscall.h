@@ -20,3 +20,6 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
+
+//this is change it 
+#define SYS_set_limit 22  // Choose an available syscall number
